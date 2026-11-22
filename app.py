@@ -4,6 +4,8 @@ import gradio as gr
 import cv2
 import numpy as np
 import tensorflow as tf
+import keras
+
 
 MODEL_PATH = "cat_dog_cnn.keras"
 FILE_ID = "1PkwTG4_D24EHrsldU35f4QvQxZ8CsYlr"
@@ -12,7 +14,7 @@ if not os.path.exists(MODEL_PATH):
     url = f"https://drive.google.com/uc?id={FILE_ID}"
     gdown.download(url, MODEL_PATH, quiet=False)
 
-model = tf.keras.models.load_model(MODEL_PATH)
+model = tf.keras.saving.load_model(MODEL_PATH,safe_mode=False)
 
 def predict_cat_dog(img):
     if img is None:
