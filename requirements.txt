@@ -5,3 +5,4 @@ numpy
 gdown
 tensorflow-hub
 tf-keras
+setuptools
