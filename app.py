@@ -5,6 +5,7 @@ import cv2
 import numpy as np
 import tensorflow as tf
 import keras
+import tensorflow_hub as hub
 
 
 MODEL_PATH = "cat_dog_cnn.keras"
@@ -14,7 +15,7 @@ if not os.path.exists(MODEL_PATH):
     url = f"https://drive.google.com/uc?id={FILE_ID}"
     gdown.download(url, MODEL_PATH, quiet=False)
 
-model = keras.saving.load_model(MODEL_PATH, safe_mode=False)
+model = keras.saving.load_model(MODEL_PATH, custom_objects={"KerasLayer": hub.KerasLayer}, safe_mode=False)
 
 def predict_cat_dog(img):
     if img is None:
