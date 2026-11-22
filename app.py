@@ -14,7 +14,7 @@ if not os.path.exists(MODEL_PATH):
     url = f"https://drive.google.com/uc?id={FILE_ID}"
     gdown.download(url, MODEL_PATH, quiet=False)
 
-model = tf.keras.saving.load_model(MODEL_PATH,safe_mode=False)
+model = keras.saving.load_model(MODEL_PATH, safe_mode=False)
 
 def predict_cat_dog(img):
     if img is None:
