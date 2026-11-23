@@ -39,14 +39,16 @@ class SafeInputLayer(keras.layers.InputLayer):
 
 class WrappedKerasLayer(keras.layers.Layer):
 
-  def _init_(self, handle=None, batch_input_shape=None, **kwargs):
-    kwargs.pop("trainable", None)
-    kwargs.pop("dtype", None)
-    super()._init_(**kwargs)
-    self.handle = handle
-    self.batch_input_shape = batch_input_shape
+  def _init_(self, *args, **kwargs):
+    self.handle = kwargs.pop("handle", None)
+    self.batch_input_shape = kwargs.pop("batch_input_shape", None)
+    safe_kwargs = {}
+    for key in ("name", "trainable", "dtype", "autocast"):
+      if key in kwargs:
+        safe_kwargs[key] = kwargs.pop(key)
+    super()._init_(**safe_kwargs)
     self.layer = (
-        hub.KerasLayer(handle, trainable=False) if handle else None
+        hub.KerasLayer(self.handle, trainable=False) if self.handle else None
     )
 
   def call(self, inputs):
