@@ -1,8 +1,8 @@
 gradio
 tensorflow
-opencv-python-headless
-numpy
-gdown
 tensorflow-hub
 tf-keras
 setuptools
+opencv-python-headless
+numpy
+gdown
