@@ -3,9 +3,21 @@ import os
 import cv2
 import gdown
 import gradio as gr
+
 import keras
 import numpy as np
 import tensorflow as tf
+
+# TensorFlow internal API compatibility
+internal = tf.__internal__
+
+if not hasattr(internal, "register_load_context_function"):
+    internal.register_load_context_function = (
+        internal.register_call_context_function
+    )
+
+import tensorflow_hub as hub
+
 import tensorflow_hub as hub
 
 
