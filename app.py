@@ -27,23 +27,41 @@ if not os.path.exists(MODEL_PATH):
   url = f"https://drive.google.com/uc?id={FILE_ID}&confirm=t"
   gdown.download(url, MODEL_PATH, quiet=False)
 
+
+class SafeInputLayer(keras.layers.InputLayer):
+
+  def _init_(self, **kwargs):
+    kwargs.pop("optional", None)
+    if "batch_input_shape" in kwargs and "batch_size" not in kwargs:
+      shape = kwargs.pop("batch_input_shape")
+      if shape and len(shape) > 0:
+        kwargs["batch_size"] = shape[0]
+        kwargs["input_shape"] = shape[1:]
+    super()._init_(**kwargs)
+
+
+class WrappedKerasLayer(keras.layers.Layer):
+
+  def _init_(self, handle=None, **kwargs):
+    kwargs.pop("trainable", None)
+    super()._init_(**kwargs)
+    self.hub_layer = hub.KerasLayer(handle) ifhandle else None
+
+  def call(self, inputs):
+    return self.hub_layer(inputs)
+
+
 try:
   model = keras.saving.load_model(
       MODEL_PATH,
-      custom_objects={"KerasLayer": hub.KerasLayer},
+      custom_objects={
+          "InputLayer": SafeInputLayer,
+          "KerasLayer": WrappedKerasLayer,
+      },
       safe_mode=False,
   )
-except Exception as e1:
-  import tf_keras
-
-  try:
-    model = tf_keras.models.load_model(
-        MODEL_PATH,
-        custom_objects={"KerasLayer": hub.KerasLayer},
-        safe_mode=False,
-    )
-  except Exception as e2:
-    raise RuntimeError(f"Keras load error: {e1} | tf_keras error: {e2}")
+except Exception as e:
+  raise RuntimeError(f"Model load error: {e}")
 
 
 def predict_cat_dog(img):
@@ -79,3 +97,4 @@ demo = gr.Interface(
 if _name_ == "_main_":
   port = int(os.environ.get("PORT", 7860))
   demo.launch(server_name="0.0.0.0", server_port=port)
+      
