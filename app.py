@@ -5,6 +5,13 @@ import gradio as gr
 import keras
 import numpy as np
 import tensorflow as tf
+
+if not hasattr(
+    tf._internal_, "register_load_context_function_in_load_context"
+):
+  tf._internal_.register_load_context_function_in_load_context = (
+      lambda *args, **kwargs: None
+  )
 import tensorflow_hub as hub
 
 MODEL_PATH = "cat_dog_cnn.keras"
