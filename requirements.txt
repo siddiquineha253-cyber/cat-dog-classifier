@@ -6,3 +6,4 @@ setuptools
 opencv-python-headless
 numpy
 gdown
+setuptools<75
