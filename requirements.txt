@@ -2,7 +2,6 @@ gradio
 tensorflow
 tensorflow-hub
 tf-keras
-setuptools
 opencv-python-headless
 numpy
 gdown
