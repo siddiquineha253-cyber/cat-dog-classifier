@@ -25,33 +25,31 @@ FILE_ID = "1PkwTG4_D24EHrsldU35f4QvQxZ8CsYlr"
 
 if not os.path.exists(MODEL_PATH):
   url = f"https://drive.google.com/uc?id={FILE_ID}&confirm=t"
-  gdown.download(url, MODEL_PATH, quiet=False)
+  gdown.download(url, MODEL_PATH, quiet=False)class SafeInputLayer(keras.layers.InputLayer):
 
-class SafeInputLayer(keras.layers.InputLayer):
-  def _init_(self, **kwargs):
+  def _init_(self, batch_input_shape=None, **kwargs):
     kwargs.pop("optional", None)
-    if "batch_input_shape" in kwargs and "batch_shape" not in kwargs:
-      kwargs["batch_shape"] = kwargs.pop("batch_input_shape")
     kwargs.pop("input_shape", None)
     kwargs.pop("batch_size", None)
+    if batch_input_shape is not None and "batch_shape" not in kwargs:
+      kwargs["batch_shape"] = batch_input_shape
     super()._init_(**kwargs)
 
 
 class WrappedKerasLayer(keras.layers.Layer):
 
-  def _init_(self, **kwargs):
-    self.handle = kwargs.pop("handle", None)
-    self.batch_input_shape = kwargs.pop("batch_input_shape", None)
+  def _init_(self, handle=None, batch_input_shape=None, **kwargs):
     kwargs.pop("trainable", None)
     kwargs.pop("dtype", None)
-    kwargs.pop("name", None)
     super()._init_(**kwargs)
-    self.hub_layer = (
-        hub.KerasLayer(self.handle, trainable=False) if self.handle else None
+    self.handle = handle
+    self.batch_input_shape = batch_input_shape
+    self.layer = (
+        hub.KerasLayer(handle, trainable=False) if handle else None
     )
 
   def call(self, inputs):
-    return self.hub_layer(inputs)
+    return self.layer(inputs)
 
   def get_config(self):
     config = super().get_config()
@@ -64,6 +62,8 @@ class WrappedKerasLayer(keras.layers.Layer):
   @classmethod
   def from_config(cls, config):
     return cls(**config)
+
+
 try:
   model = keras.saving.load_model(
       MODEL_PATH,
@@ -75,8 +75,6 @@ try:
   )
 except Exception as e:
   raise RuntimeError(f"Model load error: {e}")
-
-
 def predict_cat_dog(img):
   if img is None:
     return "Please upload an image."
@@ -85,13 +83,7 @@ def predict_cat_dog(img):
   normalized = resized / 255.0
   batch = np.expand_dims(normalized, axis=0)
 
-  if hasattr(model, "predict"):
-    pred = model.predict(batch, verbose=0)
-  else:
-    infer = model.signatures["serving_default"]
-    out = infer(tf.constant(batch, dtype=tf.float32))
-    pred = list(out.values())[0].numpy()
-
+  pred = model.predict(batch, verbose=0)
   label_idx = int(np.argmax(pred))
 
   if label_idx == 0:
@@ -106,10 +98,9 @@ demo = gr.Interface(
     outputs=gr.Textbox(label="Result"),
     title="Cat vs Dog Classifier",
 )
+
 if _name_ == "_main_":
   port = int(os.environ.get("PORT", 7860))
   demo.launch(server_name="0.0.0.0", server_port=port)
-
-
 
 
