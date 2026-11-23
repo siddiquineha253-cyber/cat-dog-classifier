@@ -38,14 +38,12 @@ class SafeInputLayer(keras.layers.InputLayer):
         kwargs["batch_size"] = shape[0]
         kwargs["input_shape"] = shape[1:]
     super()._init_(**kwargs)
-
-
-class WrappedKerasLayer(keras.layers.Layer):
+      class WrappedKerasLayer(keras.layers.Layer):
 
   def _init_(self, handle=None, **kwargs):
     kwargs.pop("trainable", None)
     super()._init_(**kwargs)
-    self.hub_layer = hub.KerasLayer(handle) ifhandle else None
+    self.hub_layer = hub.KerasLayer(handle) if handle else None
 
   def call(self, inputs):
     return self.hub_layer(inputs)
@@ -93,8 +91,10 @@ demo = gr.Interface(
     outputs=gr.Textbox(label="Result"),
     title="Cat vs Dog Classifier",
 )
-
 if _name_ == "_main_":
   port = int(os.environ.get("PORT", 7860))
   demo.launch(server_name="0.0.0.0", server_port=port)
-      
+
+
+
+
