@@ -34,8 +34,9 @@ try:
       custom_objects={"KerasLayer": hub.KerasLayer},
       safe_mode=False,
   )
-except Exception:
-  model = tf.saved_model.load(MODEL_PATH)
+if not os.path.exists(MODEL_PATH):
+  url = f"https://drive.google.com/file/d/{FILE_ID}/view?usp=sharing"
+  gdown.download(url, MODEL_PATH, quiet=False, fuzzy=True)
 
 
 def predict_cat_dog(img):
