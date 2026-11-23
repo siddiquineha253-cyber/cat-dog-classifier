@@ -38,7 +38,7 @@ class SafeInputLayer(keras.layers.InputLayer):
         kwargs["batch_size"] = shape[0]
         kwargs["input_shape"] = shape[1:]
     super()._init_(**kwargs)
-      class WrappedKerasLayer(keras.layers.Layer):
+class WrappedKerasLayer(keras.layers.Layer):
 
   def _init_(self, handle=None, **kwargs):
     kwargs.pop("trainable", None)
