@@ -1,10 +1,10 @@
 import os
+import cv2
 import gdown
 import gradio as gr
-import cv2
+import keras
 import numpy as np
 import tensorflow as tf
-import keras
 import tensorflow_hub as hub
 
 MODEL_PATH = "cat_dog_cnn.keras"
@@ -14,11 +14,14 @@ if not os.path.exists(MODEL_PATH):
   url = f"https://drive.google.com/uc?id={FILE_ID}"
   gdown.download(url, MODEL_PATH, quiet=False)
 
-model = keras.saving.load_model(
-    MODEL_PATH,
-    custom_objects={"KerasLayer": hub.KerasLayer},
-    safe_mode=False,
-)
+try:
+  model = keras.saving.load_model(
+      MODEL_PATH,
+      custom_objects={"KerasLayer": hub.KerasLayer},
+      safe_mode=False,
+  )
+except Exception:
+  model = tf.saved_model.load(MODEL_PATH)
 
 
 def predict_cat_dog(img):
@@ -29,7 +32,13 @@ def predict_cat_dog(img):
   normalized = resized / 255.0
   batch = np.expand_dims(normalized, axis=0)
 
-  pred = model.predict(batch, verbose=0)
+  if hasattr(model, "predict"):
+    pred = model.predict(batch, verbose=0)
+  else:
+    infer = model.signatures["serving_default"]
+    out = infer(tf.constant(batch, dtype=tf.float32))
+    pred = list(out.values())[0].numpy()
+
   label_idx = int(np.argmax(pred))
 
   if label_idx == 0:
@@ -44,6 +53,6 @@ demo = gr.Interface(
     outputs=gr.Textbox(label="Result"),
     title="Cat vs Dog Classifier",
 )
-
-port = int(os.environ.get("PORT", 7860))
-demo.launch(server_name="0.0.0.0", server_port=port)
+if _name_ == "_main_":
+  port = int(os.environ.get("PORT", 7860))
+  demo.launch(server_name="0.0.0.0", server_port=port)
