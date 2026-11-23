@@ -25,7 +25,8 @@ FILE_ID = "1PkwTG4_D24EHrsldU35f4QvQxZ8CsYlr"
 
 if not os.path.exists(MODEL_PATH):
   url = f"https://drive.google.com/uc?id={FILE_ID}&confirm=t"
-  gdown.download(url, MODEL_PATH, quiet=False)class SafeInputLayer(keras.layers.InputLayer):
+  gdown.download(url, MODEL_PATH, quiet=False)
+class SafeInputLayer(keras.layers.InputLayer):
 
   def _init_(self, batch_input_shape=None, **kwargs):
     kwargs.pop("optional", None)
