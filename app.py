@@ -31,16 +31,18 @@ try:
       custom_objects={"KerasLayer": hub.KerasLayer},
       safe_mode=False,
   )
-except Exception:
-  model = tf.saved_model.load(MODEL_PATH)
-def predict_cat_dog(img):
-  if img is None:
-    return "Please upload an image."
+except Exception as e1:
+  import tf_keras
 
-  resized = cv2.resize(img, (224, 224))
-  normalized = resized / 255.0
-  batch = np.expand_dims(normalized, axis=0)
-
+  try:
+    model = tf_keras.models.load_model(
+        MODEL_PATH,
+        custom_objects={"KerasLayer": hub.KerasLayer},
+        safe_mode=False,
+    )
+  except Exception as e2:
+    raise RuntimeError(f"Keras load error: {e1} | tf_keras error: {e2}")
+    
   if hasattr(model, "predict"):
     pred = model.predict(batch, verbose=0)
   else:
