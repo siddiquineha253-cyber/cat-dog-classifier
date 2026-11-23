@@ -38,10 +38,12 @@ class SafeInputLayer(keras.layers.InputLayer):
 
 
 class WrappedKerasLayer(keras.layers.Layer):
-  def _init_(self, handle=None, batch_input_shape=None, **kwargs):
+
+  def _init_(self, handle=None, **kwargs):
     kwargs.pop("trainable", None)
     kwargs.pop("dtype", None)
     kwargs.pop("name", None)
+    kwargs.pop("batch_input_shape", None)
     super()._init_(**kwargs)
     self.handle = handle
     self.hub_layer = (
@@ -50,7 +52,6 @@ class WrappedKerasLayer(keras.layers.Layer):
 
   def call(self, inputs):
     return self.hub_layer(inputs)
-
 
 try:
   model = keras.saving.load_model(
