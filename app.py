@@ -16,17 +16,15 @@ load_context_mod.register_load_context_function_in_load_context = (
 sys.modules["tf_keras.src.saving.legacy.saved_model.load_context"] = (
     load_context_mod
 )
-
-
-  
+ 
 import tensorflow_hub as hub
 
 MODEL_PATH = "cat_dog_cnn.keras"
 FILE_ID = "1PkwTG4_D24EHrsldU35f4QvQxZ8CsYlr"
 
 if not os.path.exists(MODEL_PATH):
-  url = f"https://drive.google.com/uc?id={FILE_ID}"
-  gdown.download(url, MODEL_PATH, quiet=False)
+  url = f"https://drive.google.com/file/d/{FILE_ID}/view?usp=sharing"
+  gdown.download(url, MODEL_PATH, quiet=False, fuzzy=True)
 
 try:
   model = keras.saving.load_model(
@@ -34,11 +32,8 @@ try:
       custom_objects={"KerasLayer": hub.KerasLayer},
       safe_mode=False,
   )
-if not os.path.exists(MODEL_PATH):
-  url = f"https://drive.google.com/file/d/{FILE_ID}/view?usp=sharing"
-  gdown.download(url, MODEL_PATH, quiet=False, fuzzy=True)
-
-
+except Exception:
+  model = tf.saved_model.load(MODEL_PATH)
 def predict_cat_dog(img):
   if img is None:
     return "Please upload an image."
