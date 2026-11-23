@@ -23,9 +23,8 @@ MODEL_PATH = "cat_dog_cnn.keras"
 FILE_ID = "1PkwTG4_D24EHrsldU35f4QvQxZ8CsYlr"
 
 if not os.path.exists(MODEL_PATH):
-  url = f"https://drive.google.com/file/d/{FILE_ID}/view?usp=sharing"
-  gdown.download(url, MODEL_PATH, quiet=False, fuzzy=True)
-
+  url = f"https://drive.google.com/uc?id={FILE_ID}&confirm=t"
+  gdown.download(url, MODEL_PATH, quiet=False)
 try:
   model = keras.saving.load_model(
       MODEL_PATH,
