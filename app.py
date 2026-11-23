@@ -5,13 +5,20 @@ import gradio as gr
 import keras
 import numpy as np
 import tensorflow as tf
+import types, sys
 
-if not hasattr(
-    tf._internal_, "register_load_context_function_in_load_context"
-):
-  tf._internal_.register_load_context_function_in_load_context = (
-      lambda *args, **kwargs: None
-  )
+load_context_mod = types.ModuleType(
+    "tf_keras.src.saving.legacy.saved_model.load_context"
+)
+load_context_mod.register_load_context_function_in_load_context = (
+    lambda *args, **kwargs: None
+)
+sys.modules["tf_keras.src.saving.legacy.saved_model.load_context"] = (
+    load_context_mod
+)
+
+
+  
 import tensorflow_hub as hub
 
 MODEL_PATH = "cat_dog_cnn.keras"
