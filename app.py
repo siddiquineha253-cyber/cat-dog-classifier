@@ -42,15 +42,23 @@ class WrappedKerasLayer(keras.layers.Layer):
   def _init_(self, handle=None, batch_input_shape=None, **kwargs):
     kwargs.pop("trainable", None)
     kwargs.pop("dtype", None)
-    kwargs.pop("name", None)
     super()._init_(**kwargs)
     self.handle = handle
+    self.batch_input_shape = batch_input_shape
     self.hub_layer = (
         hub.KerasLayer(handle, trainable=False) if handle else None
     )
 
   def call(self, inputs):
     return self.hub_layer(inputs)
+
+  def get_config(self):
+    config = super().get_config()
+    config.update({
+        "handle": self.handle,
+        "batch_input_shape": self.batch_input_shape,
+    })
+    return config
 
 try:
   model = keras.saving.load_model(
