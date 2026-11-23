@@ -51,7 +51,7 @@ def predict_cat_dog(img):
     return "Please upload an image."
 
   resized = cv2.resize(img, (224, 224))
-     normalized = resized / 255.0
+  normalized = resized / 255.0
   batch = np.expand_dims(normalized, axis=0)
 
   if hasattr(model, "predict"):
