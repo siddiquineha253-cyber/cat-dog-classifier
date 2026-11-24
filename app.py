@@ -88,112 +88,188 @@ def predict_cat_dog(img):
 # GRADIO INTERFACE
 # -----------------------------
 
-
 # -----------------------------
-# PROFESSIONAL AI APP INTERFACE
+# PETVISION AI - MOBILE INTERFACE
 # -----------------------------
 
 custom_css = """
 .gradio-container {
-    max-width: 950px !important;
+    max-width: 600px !important;
     margin: auto !important;
-    background: #f5f4ff !important;
+    background: #f7f7fc !important;
+    min-height: 100vh;
 }
 
 #app-header {
     text-align: center;
-    padding: 35px 15px 20px;
+    padding: 18px 10px;
 }
 
 #app-header h1 {
-    color: #4338ca;
-    font-size: 34px;
+    color: #5146c8;
+    font-size: 28px;
     font-weight: 800;
+    margin: 8px 0;
 }
 
 #app-header p {
-    color: #64748b;
-    font-size: 16px;
+    color: #77758c;
+    font-size: 14px;
+}
+
+#menu-area {
+    position: relative;
+    z-index: 100;
+    padding: 8px 12px;
+}
+
+#menu-area details {
+    position: relative;
+}
+
+#menu-area summary {
+    list-style: none;
+    cursor: pointer;
+    background: #5146c8;
+    color: white;
+    width: 44px;
+    height: 42px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 23px;
+}
+
+#menu-area summary::-webkit-details-marker {
+    display: none;
+}
+
+#side-menu {
+    position: absolute;
+    top: 50px;
+    left: 0;
+    width: 230px;
+    background: white;
+    border-radius: 16px;
+    padding: 14px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    border: 1px solid #e6e3ff;
+}
+
+.menu-item {
+    display: block;
+    padding: 13px;
+    margin: 5px 0;
+    border-radius: 10px;
+    color: #45405f !important;
+    text-decoration: none !important;
+    font-size: 15px;
+}
+
+.menu-item:hover {
+    background: #f0efff;
 }
 
 #upload-card {
     background: white;
-    border-radius: 22px;
-    padding: 22px;
-    border: 1px solid #e0e7ff;
-}
-
-#result-box {
-    border-radius: 16px;
+    border: 1px solid #e7e5f5;
+    border-radius: 20px;
+    padding: 16px;
+    margin: 8px;
+    box-shadow: 0 5px 18px rgba(50,40,100,0.06);
 }
 
 #classify-btn {
-    background: linear-gradient(90deg, #4f46e5, #7c3aed);
-    color: white;
-    border: none;
-    border-radius: 14px;
-    font-weight: bold;
+    background: #5146c8 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 12px !important;
+    font-weight: 700 !important;
 }
 
-.footer {
+#result-box {
+    border-radius: 12px;
+}
+
+#app-footer {
     text-align: center;
-    color: #64748b;
-    padding: 20px;
+    color: #88869b;
+    font-size: 12px;
+    padding: 18px;
+}
+
+@media (max-width: 480px) {
+    #app-header h1 {
+        font-size: 25px;
+    }
+
+    #upload-card {
+        margin: 5px;
+        padding: 12px;
+    }
 }
 """
 
-with gr.Blocks(
-    title="Cat vs Dog AI Classifier",
-    theme=gr.themes.Soft(
-        primary_hue="indigo",
-        secondary_hue="violet"
-    ),
-    css=custom_css
-) as demo:
+with gr.Blocks(title="PetVision AI") as demo:
+
+    with gr.Row():
+        with gr.Column(scale=1):
+            gr.HTML("""
+            <div id="menu-area">
+                <details>
+                    <summary>☰</summary>
+                    <div id="side-menu">
+                        <a class="menu-item" href="#home">🏠 Home</a>
+                        <a class="menu-item" href="#privacy">🔒 Privacy Policy</a>
+                        <a class="menu-item" href="#share">📤 Share App</a>
+                        <a class="menu-item" href="#rate">⭐ Rate App</a>
+                    </div>
+                </details>
+            </div>
+            """)
 
     gr.HTML("""
     <div id="app-header">
         <h1>🐾 PetVision AI</h1>
         <p>Smart Cat & Dog Image Classifier</p>
-        <p>Upload a photo and let AI identify your pet.</p>
+        <p>Discover your pet with Artificial Intelligence.</p>
     </div>
     """)
 
-    with gr.Row():
-        with gr.Column():
-            with gr.Group(elem_id="upload-card"):
+    with gr.Group(elem_id="upload-card"):
 
-                gr.Markdown("### 📸 Upload Your Image")
+        gr.Markdown("### 📸 Upload Your Image")
 
-                image_input = gr.Image(
-                    type="numpy",
-                    label="Choose a Cat or Dog photo",
-                    height=300
-                )
+        image_input = gr.Image(
+            type="numpy",
+            label="Choose a Cat or Dog photo",
+            height=230
+        )
 
-                classify_btn = gr.Button(
-                    "✨ Classify Image",
-                    variant="primary",
-                    elem_id="classify-btn",
-                    size="lg"
-                )
+        classify_btn = gr.Button(
+            "✨  Classify Image",
+            variant="primary",
+            elem_id="classify-btn",
+            size="lg"
+        )
 
-                result_output = gr.Textbox(
-                    label="AI Prediction",
-                    placeholder="Your prediction will appear here...",
-                    interactive=False,
-                    elem_id="result-box"
-                )
+        result_output = gr.Textbox(
+            label="AI Prediction",
+            placeholder="Your prediction will appear here...",
+            interactive=False,
+            elem_id="result-box"
+        )
 
-                clear_btn = gr.ClearButton(
-                    [image_input, result_output],
-                    value="↻ Try Another Image"
-                )
+        clear_btn = gr.ClearButton(
+            [image_input, result_output],
+            value="↻ Try Another Image"
+        )
 
     gr.HTML("""
-    <div class="footer">
+    <div id="app-footer">
         <p>Powered by Deep Learning & CNN Technology</p>
-        <p>PetVision AI | Smart Image Classification</p>
+        <p>PetVision AI | Version 1.0.0</p>
     </div>
     """)
 
@@ -202,6 +278,7 @@ with gr.Blocks(
         inputs=image_input,
         outputs=result_output
     )
+
 
 # -----------------------------
 # SERVICE WORKER ROUTE
@@ -279,11 +356,17 @@ if __name__ == "__main__":
 
     port = int(os.environ.get("PORT", 7860))
 
+    
     demo.launch(
         server_name="0.0.0.0",
         server_port=port,
         pwa=True,
-        favicon_path=str(BASE_DIR / "launchericon-512x512.png")
+        favicon_path=str(BASE_DIR / "launchericon-512x512.png"),
+        theme=gr.themes.Soft(
+            primary_hue="indigo",
+            secondary_hue="violet"
+        ),
+        css=custom_css
     )
 
 
