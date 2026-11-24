@@ -88,18 +88,19 @@ def predict_cat_dog(img):
 # GRADIO INTERFACE
 # -----------------------------
 
-# -----------------------------
-# PETVISION AI - MOBILE INTERFACE
-# -----------------------------
-
 custom_css = """
+/* Main app */
 .gradio-container {
-    max-width: 600px !important;
+    width: 100% !important;
+    max-width: 1100px !important;
     margin: auto !important;
     background: #f7f7fc !important;
     min-height: 100vh;
+    padding: 12px !important;
+    box-sizing: border-box !important;
 }
 
+/* App heading */
 #app-header {
     text-align: center;
     padding: 18px 10px;
@@ -107,7 +108,7 @@ custom_css = """
 
 #app-header h1 {
     color: #5146c8;
-    font-size: 28px;
+    font-size: clamp(25px, 4vw, 32px);
     font-weight: 800;
     margin: 8px 0;
 }
@@ -117,9 +118,10 @@ custom_css = """
     font-size: 14px;
 }
 
+/* Hamburger menu */
 #menu-area {
     position: relative;
-    z-index: 100;
+    z-index: 200;
     padding: 8px 12px;
 }
 
@@ -132,66 +134,100 @@ custom_css = """
     cursor: pointer;
     background: #5146c8;
     color: white;
-    width: 44px;
-    height: 42px;
+    width: 46px;
+    height: 44px;
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 23px;
+    position: fixed;
+    top: 14px;
+    left: 14px;
+    z-index: 220;
 }
 
 #menu-area summary::-webkit-details-marker {
     display: none;
 }
 
+/* Left side drawer */
 #side-menu {
-    position: absolute;
-    top: 50px;
+    position: fixed;
+    top: 0;
     left: 0;
-    width: 230px;
-    background: white;
-    border-radius: 16px;
-    padding: 14px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-    border: 1px solid #e6e3ff;
+    width: min(280px, 82vw);
+    height: 100vh;
+    height: 100dvh;
+    box-sizing: border-box;
+    background: #f7f7fc;
+    padding: 75px 18px 20px;
+    border-right: 1px solid #e6e3ff;
+    box-shadow: 8px 0 25px rgba(0,0,0,0.10);
+    z-index: 210;
 }
 
+/* Transparent menu buttons */
 .menu-item {
     display: block;
-    padding: 13px;
-    margin: 5px 0;
-    border-radius: 10px;
+    padding: 14px 16px;
+    margin: 9px 0;
+    border: 1px solid transparent;
+    border-radius: 12px;
     color: #45405f !important;
+    background: transparent !important;
     text-decoration: none !important;
     font-size: 15px;
+    transition: 0.2s ease;
 }
 
-.menu-item:hover {
-    background: #f0efff;
+/* Glow only on selected/focused button */
+.menu-item:focus,
+.menu-item:focus-visible,
+.menu-item:active {
+    outline: none;
+    border-color: #5146c8;
+    color: #5146c8 !important;
+    box-shadow: 0 0 10px rgba(81,70,200,0.35);
 }
 
+/* Main upload card */
 #upload-card {
+    width: calc(100% - 24px) !important;
+    max-width: 1000px !important;
+    box-sizing: border-box !important;
     background: white;
     border: 1px solid #e7e5f5;
     border-radius: 20px;
-    padding: 16px;
-    margin: 8px;
+    padding: clamp(16px, 3vw, 28px);
+    margin: 18px auto !important;
     box-shadow: 0 5px 18px rgba(50,40,100,0.06);
 }
 
+/* Photo upload and preview area */
+#upload-card .image-container {
+    min-height: clamp(280px, 42vw, 430px) !important;
+}
+
+/* Classify button */
 #classify-btn {
+    width: 100% !important;
+    min-height: 60px !important;
     background: #5146c8 !important;
     color: white !important;
     border: none !important;
     border-radius: 12px !important;
     font-weight: 700 !important;
+    font-size: 16px !important;
 }
 
+/* Prediction result */
 #result-box {
     border-radius: 12px;
+    min-height: 110px !important;
 }
 
+/* Footer */
 #app-footer {
     text-align: center;
     color: #88869b;
@@ -199,85 +235,36 @@ custom_css = """
     padding: 18px;
 }
 
-@media (max-width: 480px) {
-    #app-header h1 {
-        font-size: 25px;
+/* Mobile responsive layout */
+@media (max-width: 600px) {
+    .gradio-container {
+        padding: 8px !important;
+    }
+
+    #app-header {
+        padding: 16px 8px;
     }
 
     #upload-card {
-        margin: 5px;
-        padding: 12px;
+        width: 100% !important;
+        margin: 12px auto !important;
+        padding: 14px !important;
+        border-radius: 16px;
+    }
+
+    #upload-card .image-container {
+        min-height: 280px !important;
+    }
+
+    #classify-btn {
+        min-height: 52px !important;
+    }
+
+    #result-box {
+        min-height: 85px !important;
     }
 }
 """
-
-with gr.Blocks(title="PetVision AI") as demo:
-
-    with gr.Row():
-        with gr.Column(scale=1):
-            gr.HTML("""
-            <div id="menu-area">
-                <details>
-                    <summary>☰</summary>
-                    <div id="side-menu">
-                        <a class="menu-item" href="#home">🏠 Home</a>
-                        <a class="menu-item" href="#privacy">🔒 Privacy Policy</a>
-                        <a class="menu-item" href="#share">📤 Share App</a>
-                        <a class="menu-item" href="#rate">⭐ Rate App</a>
-                    </div>
-                </details>
-            </div>
-            """)
-
-    gr.HTML("""
-    <div id="app-header">
-        <h1>🐾 PetVision AI</h1>
-        <p>Smart Cat & Dog Image Classifier</p>
-        <p>Discover your pet with Artificial Intelligence.</p>
-    </div>
-    """)
-
-    with gr.Group(elem_id="upload-card"):
-
-        gr.Markdown("### 📸 Upload Your Image")
-
-        image_input = gr.Image(
-            type="numpy",
-            label="Choose a Cat or Dog photo",
-            height=230
-        )
-
-        classify_btn = gr.Button(
-            "✨  Classify Image",
-            variant="primary",
-            elem_id="classify-btn",
-            size="lg"
-        )
-
-        result_output = gr.Textbox(
-            label="AI Prediction",
-            placeholder="Your prediction will appear here...",
-            interactive=False,
-            elem_id="result-box"
-        )
-
-        clear_btn = gr.ClearButton(
-            [image_input, result_output],
-            value="↻ Try Another Image"
-        )
-
-    gr.HTML("""
-    <div id="app-footer">
-        <p>Powered by Deep Learning & CNN Technology</p>
-        <p>PetVision AI | Version 1.0.0</p>
-    </div>
-    """)
-
-    classify_btn.click(
-        fn=predict_cat_dog,
-        inputs=image_input,
-        outputs=result_output
-    )
 
 
 # -----------------------------
