@@ -124,6 +124,20 @@ if ("serviceWorker" in navigator) {
 # -----------------------------
 # MANIFEST ROUTE
 # -----------------------------
+@demo.app.get("/service-worker.js")
+async def serve_service_worker():
+    worker_path = BASE_DIR / "service-worker.js"
+
+    if worker_path.exists():
+        return FileResponse(
+            worker_path,
+            media_type="application/javascript"
+        )
+
+    return JSONResponse(
+        status_code=404,
+        content={"error": "Service Worker not found"}
+    )
 
 @demo.app.get("/manifest.json")
 
