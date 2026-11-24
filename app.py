@@ -88,23 +88,120 @@ def predict_cat_dog(img):
 # GRADIO INTERFACE
 # -----------------------------
 
-demo = gr.Interface(
 
-    fn=predict_cat_dog,
+# -----------------------------
+# PROFESSIONAL AI APP INTERFACE
+# -----------------------------
 
-    inputs=gr.Image(
-        type="numpy",
-        label="Upload Cat or Dog Image"
+custom_css = """
+.gradio-container {
+    max-width: 950px !important;
+    margin: auto !important;
+    background: #f5f4ff !important;
+}
+
+#app-header {
+    text-align: center;
+    padding: 35px 15px 20px;
+}
+
+#app-header h1 {
+    color: #4338ca;
+    font-size: 34px;
+    font-weight: 800;
+}
+
+#app-header p {
+    color: #64748b;
+    font-size: 16px;
+}
+
+#upload-card {
+    background: white;
+    border-radius: 22px;
+    padding: 22px;
+    border: 1px solid #e0e7ff;
+}
+
+#result-box {
+    border-radius: 16px;
+}
+
+#classify-btn {
+    background: linear-gradient(90deg, #4f46e5, #7c3aed);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-weight: bold;
+}
+
+.footer {
+    text-align: center;
+    color: #64748b;
+    padding: 20px;
+}
+"""
+
+with gr.Blocks(
+    title="Cat vs Dog AI Classifier",
+    theme=gr.themes.Soft(
+        primary_hue="indigo",
+        secondary_hue="violet"
     ),
+    css=custom_css
+) as demo:
 
-    outputs=gr.Textbox(
-        label="Result"
-    ),
+    gr.HTML("""
+    <div id="app-header">
+        <h1>🐾 PetVision AI</h1>
+        <p>Smart Cat & Dog Image Classifier</p>
+        <p>Upload a photo and let AI identify your pet.</p>
+    </div>
+    """)
 
-    title="Cat vs Dog Classifier",
+    with gr.Row():
+        with gr.Column():
+            with gr.Group(elem_id="upload-card"):
 
-    description="Upload an image to identify whether it is a Cat or a Dog."
-)
+                gr.Markdown("### 📸 Upload Your Image")
+
+                image_input = gr.Image(
+                    type="numpy",
+                    label="Choose a Cat or Dog photo",
+                    height=300
+                )
+
+                classify_btn = gr.Button(
+                    "✨ Classify Image",
+                    variant="primary",
+                    elem_id="classify-btn",
+                    size="lg"
+                )
+
+                result_output = gr.Textbox(
+                    label="AI Prediction",
+                    placeholder="Your prediction will appear here...",
+                    interactive=False,
+                    elem_id="result-box"
+                )
+
+                clear_btn = gr.ClearButton(
+                    [image_input, result_output],
+                    value="↻ Try Another Image"
+                )
+
+    gr.HTML("""
+    <div class="footer">
+        <p>Powered by Deep Learning & CNN Technology</p>
+        <p>PetVision AI | Smart Image Classification</p>
+    </div>
+    """)
+
+    classify_btn.click(
+        fn=predict_cat_dog,
+        inputs=image_input,
+        outputs=result_output
+    )
 
 # -----------------------------
 # SERVICE WORKER ROUTE
