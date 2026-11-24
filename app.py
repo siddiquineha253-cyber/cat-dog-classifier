@@ -75,7 +75,6 @@ def predict_cat_dog(img):
 
         if label_idx == 0:
             return "Prediction: Cat"
-
         else:
             return "Prediction: Dog"
 
@@ -104,34 +103,24 @@ demo = gr.Interface(
 
     title="Cat vs Dog Classifier",
 
-    description="Upload an image to identify whether it is a Cat or a Dog.",
-
-    head='''
-<link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#7C83FD">
-<script>
-if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-        navigator.serviceWorker.register("/service-worker.js")
-            .then(() => console.log("Service Worker registered"))
-            .catch(error => console.error("Service Worker error:", error));
-    });
-}
-</script>
-'''
+    description="Upload an image to identify whether it is a Cat or a Dog."
 )
 
 # -----------------------------
-# MANIFEST ROUTE
+# SERVICE WORKER ROUTE
 # -----------------------------
+
 @demo.app.get("/service-worker.js")
 async def serve_service_worker():
+
     worker_path = BASE_DIR / "service-worker.js"
 
     if worker_path.exists():
+
         return FileResponse(
             worker_path,
-            media_type="application/javascript"
+            media_type="application/javascript",
+            headers={"Service-Worker-Allowed": "/"}
         )
 
     return JSONResponse(
@@ -139,8 +128,11 @@ async def serve_service_worker():
         content={"error": "Service Worker not found"}
     )
 
-@demo.app.get("/manifest.json")
+# -----------------------------
+# MANIFEST ROUTE
+# -----------------------------
 
+@demo.app.get("/manifest.json")
 async def serve_manifest():
 
     manifest_path = BASE_DIR / "manifest.json"
@@ -166,7 +158,6 @@ async def serve_manifest():
 # -----------------------------
 
 @demo.app.get("/{icon_name}.png")
-
 async def serve_png(icon_name: str):
 
     icon_path = BASE_DIR / f"{icon_name}.png"
@@ -191,7 +182,29 @@ if __name__ == "__main__":
 
     port = int(os.environ.get("PORT", 7860))
 
+    pwa_head = """
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#7C83FD">
+
+    <script>
+    if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+            navigator.serviceWorker.register("/service-worker.js", {
+                scope: "/"
+            })
+            .then(() => console.log("Service Worker registered"))
+            .catch(error => console.error("Service Worker error:", error));
+        });
+    }
+    </script>
+    """
+
     demo.launch(
         server_name="0.0.0.0",
-        server_port=port
+        server_port=port,
+        head=pwa_head
     )
+
+
+
+
