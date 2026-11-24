@@ -1,4 +1,3 @@
-
 import os
 import gdown
 import gradio as gr
@@ -88,184 +87,23 @@ def predict_cat_dog(img):
 # GRADIO INTERFACE
 # -----------------------------
 
-custom_css = """
-/* Main app */
-.gradio-container {
-    width: 100% !important;
-    max-width: 1100px !important;
-    margin: auto !important;
-    background: #f7f7fc !important;
-    min-height: 100vh;
-    padding: 12px !important;
-    box-sizing: border-box !important;
-}
+demo = gr.Interface(
 
-/* App heading */
-#app-header {
-    text-align: center;
-    padding: 18px 10px;
-}
+    fn=predict_cat_dog,
 
-#app-header h1 {
-    color: #5146c8;
-    font-size: clamp(25px, 4vw, 32px);
-    font-weight: 800;
-    margin: 8px 0;
-}
+    inputs=gr.Image(
+        type="numpy",
+        label="Upload Cat or Dog Image"
+    ),
 
-#app-header p {
-    color: #77758c;
-    font-size: 14px;
-}
+    outputs=gr.Textbox(
+        label="Result"
+    ),
 
-/* Hamburger menu */
-#menu-area {
-    position: relative;
-    z-index: 200;
-    padding: 8px 12px;
-}
+    title="Cat vs Dog Classifier",
 
-#menu-area details {
-    position: relative;
-}
-
-#menu-area summary {
-    list-style: none;
-    cursor: pointer;
-    background: #5146c8;
-    color: white;
-    width: 46px;
-    height: 44px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 23px;
-    position: fixed;
-    top: 14px;
-    left: 14px;
-    z-index: 220;
-}
-
-#menu-area summary::-webkit-details-marker {
-    display: none;
-}
-
-/* Left side drawer */
-#side-menu {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: min(280px, 82vw);
-    height: 100vh;
-    height: 100dvh;
-    box-sizing: border-box;
-    background: #f7f7fc;
-    padding: 75px 18px 20px;
-    border-right: 1px solid #e6e3ff;
-    box-shadow: 8px 0 25px rgba(0,0,0,0.10);
-    z-index: 210;
-}
-
-/* Transparent menu buttons */
-.menu-item {
-    display: block;
-    padding: 14px 16px;
-    margin: 9px 0;
-    border: 1px solid transparent;
-    border-radius: 12px;
-    color: #45405f !important;
-    background: transparent !important;
-    text-decoration: none !important;
-    font-size: 15px;
-    transition: 0.2s ease;
-}
-
-/* Glow only on selected/focused button */
-.menu-item:focus,
-.menu-item:focus-visible,
-.menu-item:active {
-    outline: none;
-    border-color: #5146c8;
-    color: #5146c8 !important;
-    box-shadow: 0 0 10px rgba(81,70,200,0.35);
-}
-
-/* Main upload card */
-#upload-card {
-    width: calc(100% - 24px) !important;
-    max-width: 1000px !important;
-    box-sizing: border-box !important;
-    background: white;
-    border: 1px solid #e7e5f5;
-    border-radius: 20px;
-    padding: clamp(16px, 3vw, 28px);
-    margin: 18px auto !important;
-    box-shadow: 0 5px 18px rgba(50,40,100,0.06);
-}
-
-/* Photo upload and preview area */
-#upload-card .image-container {
-    min-height: clamp(280px, 42vw, 430px) !important;
-}
-
-/* Classify button */
-#classify-btn {
-    width: 100% !important;
-    min-height: 60px !important;
-    background: #5146c8 !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 12px !important;
-    font-weight: 700 !important;
-    font-size: 16px !important;
-}
-
-/* Prediction result */
-#result-box {
-    border-radius: 12px;
-    min-height: 110px !important;
-}
-
-/* Footer */
-#app-footer {
-    text-align: center;
-    color: #88869b;
-    font-size: 12px;
-    padding: 18px;
-}
-
-/* Mobile responsive layout */
-@media (max-width: 600px) {
-    .gradio-container {
-        padding: 8px !important;
-    }
-
-    #app-header {
-        padding: 16px 8px;
-    }
-
-    #upload-card {
-        width: 100% !important;
-        margin: 12px auto !important;
-        padding: 14px !important;
-        border-radius: 16px;
-    }
-
-    #upload-card .image-container {
-        min-height: 280px !important;
-    }
-
-    #classify-btn {
-        min-height: 52px !important;
-    }
-
-    #result-box {
-        min-height: 85px !important;
-    }
-}
-"""
-
+    description="Upload an image to identify whether it is a Cat or a Dog."
+)
 
 # -----------------------------
 # SERVICE WORKER ROUTE
@@ -343,17 +181,11 @@ if __name__ == "__main__":
 
     port = int(os.environ.get("PORT", 7860))
 
-    
     demo.launch(
         server_name="0.0.0.0",
         server_port=port,
         pwa=True,
-        favicon_path=str(BASE_DIR / "launchericon-512x512.png"),
-        theme=gr.themes.Soft(
-            primary_hue="indigo",
-            secondary_hue="violet"
-        ),
-        css=custom_css
+        favicon_path=str(BASE_DIR / "launchericon-512x512.png")
     )
 
 
