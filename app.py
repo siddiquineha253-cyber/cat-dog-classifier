@@ -182,29 +182,11 @@ if __name__ == "__main__":
 
     port = int(os.environ.get("PORT", 7860))
 
-    pwa_head = """
-    <link rel="manifest" href="/cat-dog-manifest.json">
-    <meta name="theme-color" content="#7C83FD">
-
-    <script>
-    if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-            navigator.serviceWorker.register("/service-worker.js", {
-                scope: "/"
-            })
-            .then(() => console.log("Service Worker registered"))
-            .catch(error => console.error("Service Worker error:", error));
-        });
-    }
-    </script>
-    """
-
     demo.launch(
         server_name="0.0.0.0",
         server_port=port,
-        head=pwa_head
+        pwa=True,
+        favicon_path=str(BASE_DIR / "launchericon-512x512.png")
     )
-
-
 
 
