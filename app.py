@@ -132,7 +132,7 @@ async def serve_service_worker():
 # MANIFEST ROUTE
 # -----------------------------
 
-@demo.app.get("/manifest.json")
+@demo.app.get("/cat-dog-manifest.json")
 async def serve_manifest():
 
     manifest_path = BASE_DIR / "manifest.json"
@@ -183,7 +183,7 @@ if __name__ == "__main__":
     port = int(os.environ.get("PORT", 7860))
 
     pwa_head = """
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="/cat-dog-manifest.json">
     <meta name="theme-color" content="#7C83FD">
 
     <script>
