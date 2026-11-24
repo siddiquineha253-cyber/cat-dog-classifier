@@ -1,0 +1,22 @@
+{
+  "name": "Cat vs Dog Classifier",
+  "icons": [
+    {
+      "src": "/launchericon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/launchericon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "start_url": "./",
+  "display": "standalone",
+  "theme_color": "#e2be41",
+  "background_color": "#eae2d2",
+  "description": "Instant AI image classifier to identify whether an uploaded photo is a Cat or a Dog"
+}
