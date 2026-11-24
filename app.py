@@ -106,7 +106,19 @@ demo = gr.Interface(
 
     description="Upload an image to identify whether it is a Cat or a Dog.",
 
-    head='<link rel="manifest" href="/manifest.json"><meta name="theme-color" content="#7C83FD">'
+    head='''
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#7C83FD">
+<script>
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+        navigator.serviceWorker.register("/service-worker.js")
+            .then(() => console.log("Service Worker registered"))
+            .catch(error => console.error("Service Worker error:", error));
+    });
+}
+</script>
+'''
 )
 
 # -----------------------------
